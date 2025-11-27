@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- FONT AWESOME untuk ikon keranjang -->
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  />
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Poppins", sans-serif;
+    }
+
+    body {
+      background: #f5f7fa;
+      color: #333;
+      line-height: 1.6;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 15px;
+      background: linear-gradient(135deg, #fefeff, #2a5298);
+      color: white;
+      padding: 30px;
+      font-size: 1.8rem;
+      font-weight: bold;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .logo {
+      width: 275px;
+      height: auto;
+    }
+
+    nav {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 20px;
+      background: #fff;
+      padding: 10px 0;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    nav a {
+      text-decoration: none;
+      color: #333;
+      font-weight: 500;
+      padding: 8px 15px;
+      border-radius: 20px;
+      transition: 0.3s;
+    }
+
+    nav a:hover {
+      background: #1e3c72;
+      color: white;
+    }
+
+    .cart-link {
+      position: relative;
+      background-color: #ffcc00;
+      padding: 8px 15px;
+      border-radius: 20px;
+      color: black;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+    }
+
+    .cart-link:hover {
+      background-color: #e6b800;
+      color: white;
+    }
+
+    .cart-count {
+      position: absolute;
+      top: -6px;
+      right: -6px;
+      background-color: red;
+      color: white;
+      font-size: 0.7rem;
+      padding: 2px 6px;
+      border-radius: 50%;
+      user-select: none;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: auto;
+      padding: 20px;
+    }
+
+    section {
+      background: #fff;
+      padding: 20px;
+      margin-bottom: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    section h2 {
+      margin-bottom: 10px;
+      color: #1e3c72;
+    }
+
+    .produk-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin-top: 15px;
+    }
+
+    .produk-item {
+      background: #f9f9f9;
+      border-radius: 10px;
+      padding: 15px;
+      text-align: center;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+      transition: 0.3s;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .produk-item:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .produk-item img {
+      width: 100%;
+      max-height: 150px;
+      object-fit: cover;
+      border-radius: 8px;
+      margin-bottom: 10px;
+    }
+
+    .add-to-cart {
+      margin-top: auto;
+      background-color: #1e3c72;
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.3s;
+      font-weight: 600;
+    }
+
+    .add-to-cart:hover {
+      background-color: #2a5298;
+    }
+
+    #kontak ul {
+      list-style: none;
+      margin-top: 10px;
+    }
+
+    #kontak li {
+      margin-bottom: 8px;
+    }
+
+    #kontak a {
+      color: #2a5298;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    #kontak a:hover {
+      text-decoration: underline;
+    }
+
+    footer {
+      text-align: center;
+      background: white;
+      color: black;
+      padding: 15px;
+      border-top-left-radius: 12px;
+      border-top-right-radius: 12px;
+    }
+
+    /* Keranjang Styles */
+    #keranjang {
+      position: fixed;
+      top: 70px;
+      right: 20px;
+      width: 320px;
+      max-height: 500px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+      padding: 15px;
+      overflow-y: auto;
+      display: none;
+      z-index: 999;
+    }
+
+    #keranjang h3 {
+      margin-bottom: 15px;
+      color: #1e3c72;
+      border-bottom: 2px solid #1e3c72;
+      padding-bottom: 5px;
+    }
+
+    #keranjang ul {
+      list-style: none;
+    }
+
+    #keranjang ul li {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 5px;
+    }
+
+    #keranjang ul li span {
+      flex: 1;
+    }
+
+    #keranjang ul li .remove-btn {
+      background: red;
+      border: none;
+      color: white;
+      padding: 3px 7px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    #keranjang .total {
+      font-weight: bold;
+      margin-top: 10px;
+      text-align: right;
+      color: #1e3c72;
+    }
+
+    #keranjang button.checkout-btn {
+      margin-top: 15px;
+      background-color: #1e3c72;
+      color: white;
+      border: none;
+      padding: 10px;
+      width: 100%;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    #keranjang button.checkout-btn:hover {
+      background-color: #2a5298;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <img src="image/silva.jpg" alt="Logo Website" class="logo" />
+  </header>
+
+  <nav>
+    <a href="#about">About</a>
+    <a href="#produk">Produk</a>
+    <a href="#kontak">Kontak</a>
+    <a href="#keranjang" class="cart-link" id="cart-icon">
+      <i class="fas fa-shopping-cart"></i>
+      <span class="cart-count">0</span>
+    </a>
+  </nav>
+
+  <div class="container">
+
+    <!-- About -->
+    <section id="about">
+      <h2>Tentang Olahraga</h2>
+      <p>
+        Olahraga adalah aktivitas fisik yang menyehatkan tubuh, membangun semangat, dan melatih kerja sama tim.
+      </p>
+    </section>
+
+    <!-- Produk -->
+    <section id="produk">
+      <h2>Produk Olahraga</h2>
+      <div class="produk-grid">
+
+        <div class="produk-item" data-name="Bola Basket" data-price="250000">
+          <img src="image/BOLA BASKET.jpg" alt="Bola Basket" />
+          <h3>Bola Basket</h3>
+          <p>Bola standar FIBA, cocok untuk latihan dan pertandingan.</p>
+          <button class="add-to-cart">Tambah ke Keranjang</button>
+        </div>
+
+        <div class="produk-item" data-name="Sepatu Basket" data-price="650000">
+          <img src="image/SEPATU BASKET.jpg" alt="Sepatu Basket" />
+          <h3>Sepatu Basket</h3>
+          <p>Dirancang untuk lompatan tinggi dan cengkeraman maksimal.</p>
+          <button class="add-to-cart">Tambah ke Keranjang</button>
+        </div>
+
+        <div class="produk-item" data-name="Jersey Basket" data-price="150000">
+          <img src="image/JERSEY BASKET.jpg" alt="Jersey Basket" />
+          <h3>Jersey Basket</h3>
+          <p>Nyaman dan menyerap keringat untuk performa terbaik.</p>
+          <button class="add-to-cart">Tambah ke Keranjang</button>
+        </div>
+
+        <div class="produk-item" data-name="Sepatu Running" data-price="550000">
+          <img src="image/SEPATU RUNNING.jpg" alt="Sepatu Running" />
+          <h3>Sepatu Running</h3>
+          <p>Ringan dan fleksibel untuk berbagai medan lari.</p>
+          <button class="add-to-cart">Tambah ke Keranjang</button>
+        </div>
+
+        <div class="produk-item" data-name="Baju Running" data-price="175000">
+          <img src="image/1 SET BAJU RUNNING.jpg" alt="Baju Running" />
+          <h3>Baju Running</h3>
+          <p>Seragam ringan yang dirancang untuk kenyamanan saat berlari.</p>
+          <button class="add-to-cart">Tambah ke Keranjang</button>
+        </div>
+
+        <div class="produk-item" data-name="Baju Renang Anak" data-price="120000">
+          <img src="image/baju renang anak.jpg" alt="Baju Renang Anak" />
+          <h3>Baju Renang Anak</h3>
+          <p>Bahan elastis dan nyaman untuk anak-anak di air.</p>
+          <button class="add-to-cart">Tambah ke Keranjang</button>
+        </div>
+
+        <div class="produk-item" data-name="Baju Renang Pendek" data-price="140000">
+          <img src="image/baju renang pendek.jpg" alt="Baju Renang Pendek" />
+          <h3>Baju Renang Pendek</h3>
+          <p>Praktis dan pas untuk aktivitas renang harian.</p>
+          <button class="add-to-cart">Tambah ke Keranjang</button>
+        </div>
+
+        <div class="produk-item" data-name="Baju Renang Dewasa" data-price="230000">
+          <img src="image/BAJU RENANG WANITA DEWASA.jpeg" alt="Baju Renang Wanita Dewasa" />
+          <h3>Baju Renang Dewasa</h3>
+          <p>Desain elegan dan nyaman untuk wanita dewasa.</p>
+          <button class="add-to-cart">Tambah ke Keranjang</button>
+        </div>
+
+        <div class="produk-item" data-name="Sepatu Badminton" data-price="480000">
+          <img src="image/toko sepatu badminton.jpeg" alt="Sepatu Badminton" />
+          <h3>Sepatu Badminton</h3>
+          <p>Grip kuat dan ringan untuk permainan cepat.</p>
+          <button class="add-to-cart">Tambah ke Keranjang</button>
+        </div>
+
+        <div class="produk-item" data-name="Raket Bulutangkis" data-price="550000">
+          <img src="image/raket bulutangkis.avif" alt="Raket Bulutangkis" />
+          <h3>Raket Bulutangkis</h3>
+          <p>Kuat, ringan, dan seimbang untuk smash maksimal.</p>
+          <button class="add-to-cart">Tambah ke Keranjang</button>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Kontak -->
+    <section id="kontak">
+      <h2>Kontak</h2>
+      <p>
+        Ingin bergabung, berolahraga bersama, atau membeli produk olahraga?
+        Hubungi kami di:
+      </p>
+      <ul>
+        <li>WhatsApp:
+          <a href="https://wa.me/6283185050062" target="_blank">+62 831-8505-0062</a>
+        </li>
+        <li>Instagram:
+          <a href="https://instagram.com/silvairma20" target="_blank">@silvairma20</a>
+        </li>
+        <li>YouTube:
+          <a href="https://www.youtube.com/@silvairmawanti-k1p" target="_blank">@silvairmawanti-k1p</a>
+        </li>
+      </ul>
+    </section>
+  </div>
+
+  <!-- Keranjang -->
+  <div id="keranjang">
+    <h3>Keranjang Belanja</h3>
+    <ul id="cart-items"></ul>
+    <div class="total">Total: Rp <span id="cart-total">0</span></div>
+    <button class="checkout-btn" id="checkout-btn">Checkout</button>
+  </div>
+
+  <footer>&copy; 2025 Website Olahraga. All rights reserved.</footer>
+  <script>
+  const addToCartButtons = document.querySelectorAll(".add-to-cart");
+  const cartCount = document.querySelector(".cart-count");
+  const cartIcon = document.getElementById("cart-icon");
+  const cartElement = document.getElementById("keranjang");
+  const cartItemsList = document.getElementById("cart-items");
+  const cartTotal = document.getElementById("cart-total");
+  const checkoutBtn = document.getElementById("checkout-btn");
+
+  // Keranjang sebagai array objek {name, price, quantity}
+  let cart = [];
+
+  // Fungsi update tampilan keranjang dan hitung total
+  function updateCart() {
+    // Update jumlah item di icon
+    const totalQuantity = cart.reduce((acc, item) => acc + item.quantity, 0);
+    cartCount.textContent = totalQuantity;
+
+    // Kosongkan list dulu
+    cartItemsList.innerHTML = "";
+
+    // Jika keranjang kosong
+    if (cart.length === 0) {
+      cartItemsList.innerHTML = "<li>Keranjang kosong.</li>";
+      cartTotal.textContent = "0";
+      checkoutBtn.disabled = true;
+      return;
+    }
+
+    checkoutBtn.disabled = false;
+
+    // Tampilkan item-item keranjang
+    cart.forEach((item, index) => {
+      const li = document.createElement("li");
+
+      li.innerHTML = `
+        <span>${item.name} (x${item.quantity})</span>
+        <span>Rp ${item.price.toLocaleString('id-ID')}</span>
+        <button class="remove-btn" data-index="${index}">&times;</button>
+      `;
+
+      cartItemsList.appendChild(li);
+    });
+
+    // Hitung total harga
+    const totalPrice = cart.reduce(
+      (acc, item) => acc + item.price * item.quantity,
+      0
+    );
+    cartTotal.textContent = totalPrice.toLocaleString('id-ID');
+  }
+
+  // Fungsi tambah item ke keranjang
+  function addItemToCart(name, price) {
+    // Cek apakah item sudah ada di keranjang
+    const existingItem = cart.find((item) => item.name === name);
+    if (existingItem) {
+      existingItem.quantity++;
+    } else {
+      cart.push({ name, price, quantity: 1 });
+    }
+    updateCart();
+  }
+
+  // Event listener tombol tambah ke keranjang
+  addToCartButtons.forEach((button) => {
+    button.addEventListener("click", (e) => {
+      const produkItem = e.target.closest(".produk-item");
+      const name = produkItem.getAttribute("data-name");
+      const price = parseInt(produkItem.getAttribute("data-price"), 10);
+      addItemToCart(name, price);
+    });
+  });
+
+  // Toggle tampilan keranjang saat ikon diklik
+  cartIcon.addEventListener("click", (e) => {
+    e.preventDefault();
+    if (cartElement.style.display === "none" || cartElement.style.display === "") {
+      cartElement.style.display = "block";
+    } else {
+      cartElement.style.display = "none";
+    }
+  });
+
+  // Event delegation untuk tombol hapus item di keranjang
+  cartItemsList.addEventListener("click", (e) => {
+    if (e.target.classList.contains("remove-btn")) {
+      const index = e.target.getAttribute("data-index");
+      cart.splice(index, 1);
+      updateCart();
+    }
+  });
+
+  // Fungsi untuk checkout (contoh: reset keranjang)
+  checkoutBtn.addEventListener("click", () => {
+    alert("Terima kasih telah berbelanja!");
+    cart = [];
+    updateCart();
+    cartElement.style.display = "none";
+  });
+
+  // Inisialisasi tampilan keranjang
+  updateCart();
+</script>
